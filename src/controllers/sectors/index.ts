@@ -19,11 +19,11 @@ export const createCurrentUser = async (
                 message: "User already exists",
             };
             res.status(200).json(result);
+            return;
         }
 
         const newUser = new UserModel(req.body);
         await newUser.save();
-        console.log(newUser);
 
         const result: IResponseData<typeof newUser> = {
             code: 201,
