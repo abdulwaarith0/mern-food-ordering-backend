@@ -1,1 +1,2 @@
-export { default as jwtCheck } from "./jwtAuth";
+export * from "./jwtAuth";
+export * from "./validate";
