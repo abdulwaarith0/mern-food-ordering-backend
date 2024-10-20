@@ -1,0 +1,1 @@
+export { default as jwtCheck } from "./jwtAuth";
