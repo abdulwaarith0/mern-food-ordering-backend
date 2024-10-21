@@ -16,8 +16,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
-app.get("/test", async(req: Request, res: Response) => {
-    res.json({ message: "Hello!" });
+app.get("/health", (_req: Request, res: Response) => {
+    res.status(200).json({ message: "health check OK!" });
 });
 app.use("/api/my/user", myUserRoute);
 
