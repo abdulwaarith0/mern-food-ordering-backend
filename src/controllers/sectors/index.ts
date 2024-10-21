@@ -48,7 +48,7 @@ export const getCurrentUser = async (
     res: Response
 ): Promise<void> => {
     try {
-        const currentUser = await UserModel.findOne({ _id: req.userId});
+        const currentUser = await UserModel.findOne({ _id: req.userId });
 
         if (!currentUser) {
             const result: IErrorResponse = {

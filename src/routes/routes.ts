@@ -7,7 +7,7 @@ const router = Router();
 
 /// /api/my/user
 // Get current user
-router.get("./", jwtCheck, jwtParse, getCurrentUser);
+router.get("/", jwtCheck, jwtParse, getCurrentUser);
 
 // Create a new user
 router.post("/", jwtCheck, createCurrentUser);
