@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createCurrentUser, getCurrentUser, updateCurrentUser } from "../controllers";
-import { jwtCheck, jwtParse, validateMyUserRequest } from "../middleware";
+import { createCurrentUser, getCurrentUser, updateCurrentUser } from "../../controllers";
+import { jwtCheck, jwtParse, validateMyUserRequest } from "../../middleware";
 
 
 const router = Router();

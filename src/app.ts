@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { NODE_ENV, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } from "./constants";
 import { Request, Response } from "express";
-import { myUserRoute } from "./routes";
+import { myRestaurantRoute, myUserRoute } from "./routes";
 import { v2 as cloudinary } from "cloudinary";
 
 
@@ -27,6 +27,7 @@ app.get("/health", (_req: Request, res: Response) => {
     res.status(200).json({ message: "health check OK!" });
 });
 app.use("/api/my/user", myUserRoute);
+app.use("/api/my/restaurant", myRestaurantRoute);
 
 
 export default app;
