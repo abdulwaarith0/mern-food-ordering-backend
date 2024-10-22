@@ -4,3 +4,6 @@ export const MONGODB_URI = process.env.MONGODB_URI ?? "";
 export const DB_NAME = process.env.DB_NAME ?? "";
 export const AUTH0_ISSUER_BASE_URL = process.env.AUTH0_ISSUER_BASE_URL ?? "";
 export const AUTH0_AUDIENCE = process.env.AUTH0_AUDIENCE ?? "";
+export const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME ?? "";
+export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY ?? "";
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET ?? "";
