@@ -14,7 +14,7 @@ import { v2 as cloudinary } from "cloudinary";
 const app: Application = express();
 
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: "https://lucid-food-ordering.onrender.com/",
 };
 
 cloudinary.config({
