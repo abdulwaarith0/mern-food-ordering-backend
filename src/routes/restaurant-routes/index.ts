@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { createMyRestaurant, getMyRestaurant } from "../../controllers";
+import { createMyRestaurant, getMyRestaurant, updateMyRestaurant } from "../../controllers";
 import { jwtCheck, jwtParse, validateMyRestaurantRequest } from "../../middleware";
 
 
@@ -34,5 +34,14 @@ router.get("/",
     getMyRestaurant
 );
 
+// Update current user's restaurant
+// PUT:  api/my/restaurant
+router.put("/",
+    upload.single("imageFile"),
+    validateMyRestaurantRequest,
+    jwtCheck,
+    jwtParse,
+    updateMyRestaurant
+);
 
 export default router;
