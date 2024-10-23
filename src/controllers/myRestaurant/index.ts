@@ -5,6 +5,7 @@ import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
 
+// Create a new restaurant
 export const createMyRestaurant = async (
     req: Request,
     res: Response
@@ -51,6 +52,42 @@ export const createMyRestaurant = async (
         };
         res.status(201).json(result);
 
+
+    } catch (error: any) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Internal server error",
+        };
+        res.status(500).json(result);
+    }
+}
+
+
+// Get current user's restaurant
+export const getMyRestaurant = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const restaurant = await Restaurant.findOne({
+            user: req.userId,
+        });
+
+        if (!restaurant) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: "Restaurant not found",
+            };
+            res.status(404).json(result);
+            return;
+        }
+
+        const result: IResponseData<typeof restaurant> = {
+            code: 200,
+            data: restaurant,
+            message: "Restaurant found successfully",
+        };
+        res.status(200).json(result);
 
     } catch (error: any) {
         const result: IErrorResponse = {
