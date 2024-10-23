@@ -1,22 +1,26 @@
 import express, { Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { NODE_ENV, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } from "./constants";
+import {
+    NODE_ENV,
+    CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
+} from "./constants";
 import { Request, Response } from "express";
 import { myRestaurantRoute, myUserRoute } from "./routes";
 import { v2 as cloudinary } from "cloudinary";
 
-
 const app: Application = express();
 
 const corsOptions = {
-    origin: 'https://lucid-food-ordering.onrender.com'
+    origin: "http://localhost:5173",
 };
 
 cloudinary.config({
     cloud_name: CLOUDINARY_CLOUD_NAME,
     api_key: CLOUDINARY_API_KEY,
-    api_secret: CLOUDINARY_API_SECRET
+    api_secret: CLOUDINARY_API_SECRET,
 });
 
 app.use(express.json());
@@ -28,6 +32,5 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);
-
 
 export default app;

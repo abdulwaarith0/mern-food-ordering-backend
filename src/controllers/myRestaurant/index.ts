@@ -43,7 +43,7 @@ export const createMyRestaurant = async (
             lastUpdated: new Date(),
         });
         await restaurant.save(); 
-
+        
         const result: IResponseData<typeof restaurant> = {
             code: 201,
             data: restaurant,
