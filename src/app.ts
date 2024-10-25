@@ -8,7 +8,7 @@ import {
     CLOUDINARY_API_SECRET,
 } from "./constants";
 import { Request, Response } from "express";
-import { myRestaurantRoute, myUserRoute } from "./routes";
+import { myRestaurantRoute, myUserRoute, restaurantRoute } from "./routes";
 import { v2 as cloudinary } from "cloudinary";
 
 const app: Application = express();
@@ -32,5 +32,5 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);
-
+app.use("/api/restaurant", restaurantRoute);
 export default app;

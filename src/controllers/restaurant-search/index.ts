@@ -1,0 +1,88 @@
+import { Request, Response } from "express";
+import { IErrorResponse, IRestaurant, ISearchRestaurantResponse } from "../types";
+import { Restaurant } from "../../models";
+
+
+// /api/restaurant/search/:city
+export const searchRestaurant = async (req: Request, res: Response) => {
+    try {
+        const { city } = req.params;
+        const searchQuery = (req.query.searchQuery as string) || "";
+        const selectedCuisines = (req.query.selectedCuisines as string) || "";
+        const sortOptions = (req.query.sortOptions as string) || "lastUpdated";
+        const page = parseInt(req.query.page as string) || 1;
+
+        let query: any = { city };
+
+        query["city"] = new RegExp(city, "i");
+        const cityCheck = await Restaurant.countDocuments(query);
+        if (cityCheck === 0) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: `No restaurants found in ${city}`,
+            };
+            res.status(404).json({
+                result,
+                pagination: {
+                    total: 0,
+                    page: 1,
+                    pages: 1
+                }
+            });
+            return;
+        }
+
+        if (selectedCuisines) {
+            // Split the selected cuisines by comma and create an array of regex patterns
+            const cuisinesArray = selectedCuisines
+                .split(",")
+                .map((cuisine) => new RegExp(cuisine, "i"));
+            query["cuisines"] = { $all: cuisinesArray };
+        }
+
+        if (searchQuery) {
+            // restaurantName = Pizza palace
+            // cuisines = [ Pizza, Burritos, Pasta ]
+            // searchQuery = Pizza
+
+            const searchRegex = new RegExp(searchQuery, "i");
+            query["$or"] = [
+                { restaurantName: searchRegex },
+                { cuisines: { $in: [searchRegex] } },
+            ];
+        }
+
+        const pageSize = 10;
+        const skip = (page - 1) * pageSize;
+
+        const restaurants = await Restaurant.find(query)
+            .sort({ [sortOptions]: 1 })
+            .skip(skip)
+            .limit(pageSize)
+            .lean();
+
+        const total = await Restaurant.countDocuments(query);
+
+        const result: ISearchRestaurantResponse = {
+            restaurants: {
+                code: 200,
+                data: restaurants,
+                message: "Restaurants fetched successfully",
+            },
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / pageSize),
+            }
+        };
+
+        res.status(200).json(result);
+    } catch (error) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Internal server error",
+        };
+        res.status(500).json(result);
+    }
+}
+
