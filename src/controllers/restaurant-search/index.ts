@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IErrorResponse, IRestaurant, ISearchRestaurantResponse } from "../types";
+import { IErrorResponse } from "../types";
 import { Restaurant } from "../../models";
 
 
@@ -63,12 +63,8 @@ export const searchRestaurant = async (req: Request, res: Response) => {
 
         const total = await Restaurant.countDocuments(query);
 
-        const result: ISearchRestaurantResponse = {
-            restaurants: {
-                code: 200,
-                data: restaurants,
-                message: "Restaurants fetched successfully",
-            },
+        const result = {
+            data: restaurants,
             pagination: {
                 total,
                 page,
