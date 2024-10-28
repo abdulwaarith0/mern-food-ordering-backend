@@ -15,6 +15,9 @@ const app: Application = express();
 
 const corsOptions = {
     origin: "https://lucid-food-ordering.onrender.com",
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type,Authorization',
 };
 
 cloudinary.config({
