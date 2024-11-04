@@ -1,7 +1,39 @@
 import { Request, Response } from "express";
-import { IErrorResponse } from "../types";
+import { IErrorResponse, IResponseData } from "../types";
 import { Restaurant } from "../../models";
 
+
+// Get a single restaurant
+export const getRestaurant = async (req: Request, res: Response) => {
+    try {
+        const restaurantId  = req.params.restaurantId;
+
+        const restaurant = await Restaurant.findById(restaurantId);
+
+        if (!restaurant) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: "Restaurant not found",
+            };
+            res.status(404).json(result);
+            return;
+        }
+
+        const result: IResponseData<typeof restaurant> = {
+            code: 200,
+            data: restaurant,
+            message: "Restaurant found",
+        };
+        res.status(200).json(result);
+
+    } catch (error) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Internal server error",
+        };
+        res.status(500).json(result);
+    }
+}
 
 // /api/restaurant/search/:city
 export const searchRestaurant = async (req: Request, res: Response) => {
