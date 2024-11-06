@@ -20,6 +20,7 @@ export type ICheckoutSession = {
         name: string;
         addressLine1: string;
         city: string;
+        country: string;
     };
     restaurantId: string;
 }
@@ -59,18 +60,13 @@ export const createCheckoutSession = async (
         if (!session.url) {
             const result: IErrorResponse = {
                 code: 500,
-                message: "Failed to create checkout session",
+                message: "Failed to create stripe checkout session",
             };
             res.status(500).json(result);
             return;
         }
 
-        const result: IResponseData<string> = {
-            code: 200,
-            message: "Checkout session created",
-            data: session.url,
-        };
-        res.status(200).json(result);
+        res.json({ url: session.url });
 
     } catch (error: any) {
         const result: IErrorResponse = {
@@ -124,7 +120,6 @@ export const createLineItems = (
     return { lineItems, errors };
 };
 
-
 export const createSession = async (
     lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
     orderId: string,
@@ -150,7 +145,7 @@ export const createSession = async (
             orderId: orderId,
             restaurantId,
         },
-        success_url: `${Frontend_URL}/order-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${Frontend_URL}/order-status/?success=true`, 
         cancel_url: `${Frontend_URL}/detail/${restaurantId}?cancelled=true`,
     });
 
