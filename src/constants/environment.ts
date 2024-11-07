@@ -9,3 +9,4 @@ export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY ?? "";
 export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET ?? "";
 export const STRIPE_API_KEY = process.env.STRIPE_API_KEY ?? "";
 export const FRONTEND_URL = process.env.FRONTEND_URL ?? "";
+export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET ?? "";

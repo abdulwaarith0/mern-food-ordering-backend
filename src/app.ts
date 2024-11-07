@@ -15,7 +15,7 @@ import { v2 as cloudinary } from "cloudinary";
 const app: Application = express();
 
 const corsOptions = {
-    origin: "http://localhost:5173",
+    origin: "https://lucid-food-ordering.onrender.com",
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
@@ -27,18 +27,20 @@ cloudinary.config({
     api_secret: CLOUDINARY_API_SECRET,
 });
 
-app.use(express.json());
 app.use(cors(corsOptions));
-
 app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
+app.use("/api/order/checkout/webhook", express.raw({ type: "*/*" }));
+
+app.use(express.json());
+
 app.get("/health", (_req: Request, res: Response) => {
     res.status(200).json({ message: "Health Check OK!" });
 });
+
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);
 app.use("/api/restaurant", restaurantRoute);
 app.use("/api/order", orderRoute);
-
 
 
 export default app;

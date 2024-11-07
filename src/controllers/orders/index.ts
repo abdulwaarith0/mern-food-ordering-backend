@@ -1,7 +1,7 @@
 import Stripe from "stripe";
-import { STRIPE_API_KEY, FRONTEND_URL } from "../../constants";
+import { STRIPE_API_KEY, FRONTEND_URL, STRIPE_WEBHOOK_SECRET } from "../../constants";
 import { Request, Response } from "express";
-import { IErrorResponse, IResponseData } from "../types";
+import { IErrorResponse } from "../types";
 import { Restaurant, Order } from "../../models";
 import { IMenuItem } from "../../models/restaurant";
 
@@ -26,12 +26,41 @@ export type ICheckoutSession = {
 }
 
 export const stripeWebhookHandler = async (req: Request, res: Response) => {
-    const event = req.body;
-    console.log("RECEIVED WEBHOOK");
-    console.log("=================");
-    console.log("event", event);
-    res.send();
-}
+    let event;
+
+    try {
+        const sig = req.headers['stripe-signature'] as string;
+        event = STRIPE.webhooks.constructEvent(req.body,
+            sig, STRIPE_WEBHOOK_SECRET);
+
+    } catch (error: any) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: `Webhook Error: ${error.message}`,
+        };
+        res.status(400).json(result);
+        return;
+    }
+
+    if (event.type === "checkout.session.completed") {
+        const order = await Order.findById(event.data.object.metadata?.orderId);
+
+        if (!order) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: "Order not found",
+            };
+            res.status(404).json(result);
+            return;
+        }
+
+        order.totalAmount = event.data.object.amount_total;
+        order.status = "paid";
+        await order.save();
+    }
+
+    res.status(200).send();
+};
 
 
 export const createCheckoutSession = async (
