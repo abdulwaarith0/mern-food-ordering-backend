@@ -4,8 +4,8 @@
   "main": "./src/index.ts",
   "scripts": {
     "ts.check": "tsc --project tsconfig.json",
-    "start:dev": "nodemon ./src/index.ts",
-    "dev": "concurrently yarn:start:*",
+    "dev": "concurrently \"nodemon\" \"npm run stripe\" ",
+    "stripe": "stripe listen --forward-to=http://localhost:7000/api/order/checkout/webhook",
     "build": "npm install && npx tsc",
     "start": "node ./dist/index.js"
   },

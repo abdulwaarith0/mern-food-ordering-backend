@@ -15,7 +15,7 @@ import { v2 as cloudinary } from "cloudinary";
 const app: Application = express();
 
 const corsOptions = {
-    origin: "https://lucid-food-ordering.onrender.com",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
@@ -32,7 +32,7 @@ app.use(cors(corsOptions));
 
 app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 app.get("/health", (_req: Request, res: Response) => {
-    res.status(200).json({ message: "health check OK!" });
+    res.status(200).json({ message: "Health Check OK!" });
 });
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);

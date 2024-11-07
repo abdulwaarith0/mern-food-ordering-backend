@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { STRIPE_API_KEY, FRONTEND_URL } from "../../constants";
 import { Request, Response } from "express";
 import { IErrorResponse, IResponseData } from "../types";
-import { Restaurant } from "../../models";
+import { Restaurant, Order } from "../../models";
 import { IMenuItem } from "../../models/restaurant";
 
 
@@ -25,6 +25,14 @@ export type ICheckoutSession = {
     restaurantId: string;
 }
 
+export const stripeWebhookHandler = async (req: Request, res: Response) => {
+    const event = req.body;
+    console.log("RECEIVED WEBHOOK");
+    console.log("=================");
+    console.log("event", event);
+    res.send();
+}
+
 
 export const createCheckoutSession = async (
     req: Request,
@@ -45,6 +53,14 @@ export const createCheckoutSession = async (
             return;
         }
 
+        const newOrder = new Order({
+            restaurant: restaurant,
+            user: req.userId,
+            status: "placed",
+            deliveryDetails: checkoutSessionRequest.deliveryDetails,
+            cartItems: checkoutSessionRequest.cartItems,
+        });
+
         const lineItems = createLineItems(
             checkoutSessionRequest,
             restaurant.menuItems
@@ -52,7 +68,7 @@ export const createCheckoutSession = async (
 
         const session = await createSession(
             lineItems.lineItems,
-            "TEST_ORDER_ID",
+            newOrder._id.toString(),
             restaurant.deliveryPrice,
             restaurant._id.toString()
         );
@@ -66,6 +82,7 @@ export const createCheckoutSession = async (
             return;
         }
 
+        await newOrder.save();
         res.json({ url: session.url });
 
     } catch (error: any) {
@@ -145,7 +162,7 @@ export const createSession = async (
             orderId: orderId,
             restaurantId,
         },
-        success_url: `${Frontend_URL}/order-status/?success=true`, 
+        success_url: `${Frontend_URL}/order-status/?success=true`,
         cancel_url: `${Frontend_URL}/detail/${restaurantId}?cancelled=true`,
     });
 

@@ -44,10 +44,6 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum: ["placed", "paid", "inProgress", "outForDelivery", "delivered", "cancelled"],
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
 }, { timestamps: true });
 
 
