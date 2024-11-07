@@ -35,7 +35,7 @@ export const stripeWebhookHandler = async (req: Request, res: Response) => {
 
     } catch (error: any) {
         const result: IErrorResponse = {
-            code: 500,
+            code: 400,
             message: `Webhook Error: ${error.message}`,
         };
         res.status(400).json(result);
@@ -60,6 +60,23 @@ export const stripeWebhookHandler = async (req: Request, res: Response) => {
     }
 
     res.status(200).send();
+};
+
+export const getMyOrders = async (req: Request, res: Response) => {
+    try {
+        const orders = await Order.find({ user: req.userId })
+            .populate("restaurant")
+            .populate("user");
+
+        res.json(orders);
+
+    } catch (error: any) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Failed to get orders",
+        };
+        res.status(500).json(result);
+    }
 };
 
 
