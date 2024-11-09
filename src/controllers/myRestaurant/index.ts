@@ -1,9 +1,51 @@
 import { Request, Response } from "express";
 import { IErrorResponse, IResponseData } from "../types";
-import { Restaurant } from "../../models";
+import { Order, Restaurant } from "../../models";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
+
+
+// Get current user's restaurant orders
+export const getMyRestaurantOrders = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+
+        const restaurant = await Restaurant.findOne({
+            user: req.userId,
+        });
+
+        if (!restaurant) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: "Restaurant not found",
+            };
+            res.status(404).json(result);
+            return;
+        }
+
+        const orders = await Order.find({ restaurant: restaurant._id })
+            .populate("restaurant")
+            .populate("user");
+
+        const result: IResponseData<typeof orders> = {
+            code: 200,
+            data: orders,
+            message: "Orders fetched successfully",
+        };
+        res.status(200).json(result);
+
+    } catch (error: any) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Internal server error",
+        };
+        res.status(500).json(result);
+        return;
+    }
+}
 
 // Create a new restaurant
 export const createMyRestaurant = async (
