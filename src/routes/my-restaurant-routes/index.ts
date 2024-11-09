@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { createMyRestaurant, getMyRestaurant, updateMyRestaurant, getMyRestaurantOrders } from "../../controllers";
+import { createMyRestaurant, getMyRestaurant, updateMyRestaurant, getMyRestaurantOrders, updateOrderStatus } from "../../controllers";
 import { jwtCheck, jwtParse, validateMyRestaurantRequest } from "../../middleware";
 
 
@@ -22,6 +22,15 @@ router.get("/orders",
     jwtCheck,
     jwtParse,
     getMyRestaurantOrders
+);
+
+
+// Update order status (for restaurant)
+// PATCH:  api/my/restaurant/order/:orderId/status
+router.patch("/order/:orderId/status",
+    jwtCheck,
+    jwtParse,
+    updateOrderStatus
 );
 
 

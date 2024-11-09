@@ -47,6 +47,45 @@ export const getMyRestaurantOrders = async (
     }
 }
 
+// Update order status (for restaurant)
+export const updateOrderStatus = async (
+    req: Request,
+    res: Response
+): Promise<void> => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            const result: IErrorResponse = {
+                code: 404,
+                message: "Order not found",
+            };
+            res.status(404).json(result);
+            return;
+        }
+
+        order.set({ status });
+        await order.save();
+
+        const result: IResponseData<typeof order> = {
+            code: 200,
+            data: order,
+            message: "Order status updated successfully",
+        };
+        res.status(200).json(result);
+
+    } catch (error: any) {
+        const result: IErrorResponse = {
+            code: 500,
+            message: "Unable to update order status",
+        };
+        res.status(500).json(result);
+    }
+}
+
 // Create a new restaurant
 export const createMyRestaurant = async (
     req: Request,
