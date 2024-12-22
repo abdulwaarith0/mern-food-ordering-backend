@@ -1,46 +1,34 @@
-
 ARG NODE_VERSION=18.12.0
 
-FROM node:${NODE_VERSION}-alpine as base
+# Build stage
+FROM node:${NODE_VERSION}-alpine as build
+
+WORKDIR /app
 
 
-WORKDIR /usr/src/app
+# Install dependencies 
+COPY package.json package-lock.json ./
+RUN npm install
 
 
-FROM base as deps
-
-
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
-
-
-FROM deps as build
-
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci
-
+# Copy the rest of the application code
 COPY . .
 
+
+# Build the application and compile typescript to javascript
 RUN npm run build
 
 
-FROM base as final
+FROM node:${NODE_VERSION}-alpine as final
+
+WORKDIR /app
 
 
-ENV NODE_ENV production
-
-USER node
-
-COPY package.json .
-
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+# Copy only the necessary files from the build stage
+COPY --from=build /app /app
 
 
 EXPOSE 7000
 
-CMD ["npm", "start"]
+
+CMD ["npm", "run", "start"]
